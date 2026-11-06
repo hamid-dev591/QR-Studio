@@ -1,0 +1,71 @@
+{
+  "name": "QR Studio",
+  "short_name": "QR Studio",
+  "id": "./",
+  "description": "A private, offline-first QR code generator, batch tool and scanner. Everything stays on your device.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "./index.html#/dashboard",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#0a0910",
+  "theme_color": "#0a0910",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "./assets/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./assets/icons/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "QR Generator",
+      "short_name": "Generate",
+      "description": "Create a new QR code",
+      "url": "./index.html#/generator",
+      "icons": [{ "src": "./assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "QR Scanner",
+      "short_name": "Scan",
+      "description": "Scan a QR code with the camera or an image",
+      "url": "./index.html#/scanner",
+      "icons": [{ "src": "./assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Batch Generator",
+      "short_name": "Batch",
+      "description": "Generate many QR codes at once",
+      "url": "./index.html#/batch",
+      "icons": [{ "src": "./assets/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

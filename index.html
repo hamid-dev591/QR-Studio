@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="QR Studio — a private, offline-first QR code generator, batch tool and scanner. Everything stays on your device.">
+  <meta name="theme-color" content="#0a0910">
+  <meta name="color-scheme" content="dark light">
+  <meta name="application-name" content="QR Studio">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="QR Studio">
+  <meta name="format-detection" content="telephone=no">
+  <title>QR Studio</title>
+
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/svg+xml" href="./assets/icons/icon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/icon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/icon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/icon-180.png">
+
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="./css/layout.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/generator.css">
+  <link rel="stylesheet" href="./css/scanner.css">
+  <link rel="stylesheet" href="./css/responsive.css">
+
+  <script>
+    /* Paint theme and reading direction before the first frame to avoid a flash. */
+    (function () {
+      try {
+        var raw = localStorage.getItem('qs.settings.v1');
+        var settings = raw ? JSON.parse(raw) : {};
+        var pref = settings && settings.theme;
+        var dark = true;
+        if (pref === 'light') dark = false;
+        else if (pref === 'system') dark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        else if (pref !== 'dark') dark = true;
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        var lang = settings && (settings.language === 'ar' || settings.language === 'en')
+          ? settings.language
+          : ((navigator.language || 'en').toLowerCase().indexOf('ar') === 0 ? 'ar' : 'en');
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+        document.documentElement.dataset.lang = lang;
+      } catch (error) {
+        document.documentElement.dataset.theme = 'dark';
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link sr-only" href="#view" data-i18n="common.skipToContent">Skip to content</a>
+
+  <div class="boot" id="boot" aria-hidden="true">
+    <div class="boot-inner">
+      <img class="boot-logo" src="./assets/icons/logo.svg" alt="" width="62" height="62">
+      <div class="boot-name">QR Studio</div>
+      <div class="boot-spinner" role="status"></div>
+      <span class="sr-only" data-i18n="common.loading">Loading…</span>
+    </div>
+  </div>
+
+  <div class="app-shell" id="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation" data-i18n-aria-label="common.mainNav">
+      <div class="sidebar-top">
+        <a class="brand" href="#/dashboard">
+          <span class="brand-mark"><img src="./assets/icons/logo.svg" alt="" width="38" height="38"></span>
+          <span class="brand-text">
+            <span class="brand-name">QR Studio</span>
+            <span class="brand-sub" data-i18n="common.tagline">Private. Local. Yours.</span>
+          </span>
+        </a>
+        <button type="button" class="btn btn-icon btn-ghost sidebar-collapse" id="sidebar-collapse" data-i18n-aria-label="common.collapseSidebar" aria-label="Collapse sidebar">
+          <i class="icon" data-lucide="panel-left-close"></i>
+        </button>
+      </div>
+
+      <nav class="nav" id="main-nav">
+        <div class="nav-section-label" data-i18n="nav.workspace">Workspace</div>
+        <a class="nav-item" href="#/dashboard" data-route="dashboard" data-i18n-title="nav.dashboard" title="Dashboard">
+          <i class="icon" data-lucide="layout-dashboard"></i>
+          <span data-i18n="nav.dashboard">Dashboard</span>
+        </a>
+        <a class="nav-item" href="#/generator" data-route="generator" data-i18n-title="nav.generator" title="QR Generator">
+          <i class="icon" data-lucide="qr-code"></i>
+          <span data-i18n="nav.generator">QR Generator</span>
+        </a>
+        <a class="nav-item" href="#/batch" data-route="batch" data-i18n-title="nav.batch" title="Batch Generator">
+          <i class="icon" data-lucide="layers"></i>
+          <span data-i18n="nav.batch">Batch Generator</span>
+        </a>
+        <a class="nav-item" href="#/scanner" data-route="scanner" data-i18n-title="nav.scanner" title="QR Scanner">
+          <i class="icon" data-lucide="scan-line"></i>
+          <span data-i18n="nav.scanner">QR Scanner</span>
+        </a>
+
+        <div class="nav-section-label" data-i18n="nav.library">Library</div>
+        <a class="nav-item" href="#/history" data-route="history" data-i18n-title="nav.history" title="History">
+          <i class="icon" data-lucide="history"></i>
+          <span data-i18n="nav.history">History</span>
+          <span class="nav-badge" data-badge="history" hidden>0</span>
+        </a>
+        <a class="nav-item" href="#/favorites" data-route="favorites" data-i18n-title="nav.favorites" title="Favorites">
+          <i class="icon" data-lucide="star"></i>
+          <span data-i18n="nav.favorites">Favorites</span>
+          <span class="nav-badge" data-badge="favorites" hidden>0</span>
+        </a>
+
+        <div class="nav-section-label" data-i18n="nav.system">System</div>
+        <a class="nav-item" href="#/settings" data-route="settings" data-i18n-title="nav.settings" title="Settings">
+          <i class="icon" data-lucide="settings"></i>
+          <span data-i18n="nav.settings">Settings</span>
+        </a>
+        <a class="nav-item" href="#/about" data-route="about" data-i18n-title="nav.about" title="About">
+          <i class="icon" data-lucide="circle-help"></i>
+          <span data-i18n="nav.about">About</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="local-badge">
+          <i class="icon" data-lucide="shield-check"></i>
+          <span data-i18n="common.localOnly">100% local · no cloud</span>
+        </div>
+        <div class="sidebar-version">QR Studio <span data-app-version>1.0.0</span></div>
+      </div>
+    </aside>
+
+    <div class="drawer-scrim" id="drawer-scrim" aria-hidden="true"></div>
+
+    <div class="app-main">
+      <header class="topbar">
+        <button type="button" class="btn btn-icon btn-ghost" id="menu-toggle" aria-label="Open menu" data-i18n-aria-label="common.openMenu">
+          <i class="icon" data-lucide="menu"></i>
+        </button>
+        <div class="topbar-title">
+          <span class="topbar-kicker" id="page-kicker" data-i18n="nav.workspace">Workspace</span>
+          <h1 id="page-title" data-i18n="nav.dashboard">Dashboard</h1>
+        </div>
+        <div class="topbar-actions">
+          <span class="offline-badge" id="offline-badge" hidden>
+            <i class="icon" data-lucide="cloud-off"></i>
+            <span data-i18n="common.offline">Offline</span>
+          </span>
+          <button type="button" class="btn btn-primary btn-sm topbar-install" id="install-btn" hidden>
+            <i class="icon" data-lucide="download"></i>
+            <span data-i18n="common.installApp">Install</span>
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm lang-toggle" id="lang-toggle" title="العربية" aria-label="Switch language">
+            AR
+          </button>
+          <button type="button" class="btn btn-icon btn-secondary" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme" data-i18n-aria-label="common.toggleTheme">
+            <i class="icon" data-lucide="sun"></i>
+          </button>
+        </div>
+      </header>
+
+      <main class="view" id="view" tabindex="-1">
+        <div class="route-loading">
+          <span class="spinner"></span>
+          <span data-i18n="common.loading">Loading…</span>
+        </div>
+      </main>
+
+      <footer class="app-footer">
+        <span>QR Studio</span>
+        <span class="footer-dot" aria-hidden="true"></span>
+        <span data-i18n="common.footerTagline">Built for privacy — nothing leaves your device.</span>
+        <span class="footer-dot" aria-hidden="true"></span>
+        <a href="#/about" data-i18n="nav.about">About</a>
+        <span class="spacer"></span>
+        <span>v<span data-app-version>1.0.0</span></span>
+      </footer>
+    </div>
+  </div>
+
+  <div class="toast-root" id="toast-root" aria-live="polite" aria-atomic="false"></div>
+  <div class="print-root" id="print-root"></div>
+
+  <noscript>
+    <div style="padding:40px;text-align:center;font-family:system-ui,sans-serif">
+      <h1>QR Studio</h1>
+      <p>This app needs JavaScript enabled to generate and scan QR codes. All processing happens locally in your browser.</p>
+    </div>
+  </noscript>
+
+  <script src="./lib/lucide/lucide.js" defer></script>
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
